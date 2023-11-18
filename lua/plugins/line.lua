@@ -11,7 +11,7 @@ return {
 		local conditions = require 'heirline.conditions'
 		local utils = require 'heirline.utils'
 
-		--[[--------------------------------------------------------------[[
+		--[[--------------------------------------------------------------[[{{{
 		--
 		-- base = "#1e1e2e",
 	  	-- blue = "#89b4fa",
@@ -40,7 +40,7 @@ return {
 		-- text = "#cdd6f4",
 		-- yellow = "#f9e2af"
 		--    󰉖 󰈙 󰅡    
-		--]]--------------------------------------------------------------]]
+		--]]--------------------------------------------------------------]]}}}
 		local colors = require 'catppuccin.palettes'.get_palette 'mocha'
 		require 'heirline'.load_colors(colors)
 
@@ -148,14 +148,22 @@ return {
 		}-- }}}
 
 		local FileName = {-- {{{
-			provider = function(self)
-				local filename = vim.fn.fnamemodify(self.filename, ':.')
-				if filename == '' then return '[Scratch]' end
-				if not conditions.width_percent_below(#filename, 0.25) then
-					filename = vim.fn.pathshorten(filename)
+			flexible = 30,
+			{
+				provider = function(self)
+					local filename = vim.fn.fnamemodify(self.filename, ':.')
+					if filename == '' then return '[Scratch]' end
+					if not conditions.width_percent_below(#filename, 0.25) then
+						filename = vim.fn.pathshorten(filename)
+					end
+					return filename
+				end,
+			},
+			{
+				provider = function()
+					return vim.fn.expand('%:t')
 				end
-				return filename
-			end,
+			},
 			hl = { fg = 'sapphire' },
 		}-- }}}
 
@@ -376,15 +384,26 @@ return {
 
 		-- assembling status line
 		ViMode = utils.surround({ "", "" }, "surface0", { ViMode })
-		Ruler = utils.surround({ "", "" }, "surface0", { Ruler })
 		LspG = utils.surround({ "", "" }, "surface0", { Git, LSPActive })
 
-		local DefaultStatusline = {
-			ViMode, Space, FileNameBlock, Align,
-			FileType, SpaceL, FileFormat, SpaceL, FileEncoding, SpaceL, FileSize, Space, Ruler, ScrollBar
-		}
+		local Nothing = { provider = "" }
 
-		local GitLSPStatusline = {
+		local DefaultStatusline = {-- {{{
+			ViMode, Space, FileNameBlock, -- not flexible
+			{ flexible = 40, Align, SpaceR },
+			{ flexible = 20, { FileType, SpaceL }, Nothing },
+			{ flexible = 10, { FileFormat, SpaceL }, Nothing },
+			{ flexible = 10, { FileEncoding, SpaceL }, Nothing },
+			{ flexible = 20, { FileSize, Space }, Nothing },
+			{ flexible = 30, {
+				utils.surround({ "", "" }, "surface0", { Ruler })
+			}, {
+				utils.surround({ "", "" }, "surface0", { Ruler })
+			}},
+			{ flexible = 30, ScrollBar, Nothing }
+		}-- }}}
+
+		local GitLSPStatusline = {-- {{{
 			condition = function()
 				if (conditions.lsp_attached() or conditions.is_git_repo()) then
 					return true
@@ -392,16 +411,28 @@ return {
 					return false
 				end
 			end,
-			ViMode, Space, FileNameBlock, Align,
-			LspG, Space, FileType, SpaceL, FileFormat, SpaceL, FileEncoding, SpaceL, FileSize, Space, Ruler, ScrollBar
-		}
 
-		local InactiveStatusline = {
+			ViMode, Space, FileNameBlock, -- not flexible
+			{ flexible = 40, Align, SpaceR },
+			{ flexible = 1, { LspG, Space }, Nothing },
+			{ flexible = 20, { FileType, SpaceL }, Nothing },
+			{ flexible = 10, { FileFormat, SpaceL }, Nothing },
+			{ flexible = 10, { FileEncoding, SpaceL }, Nothing },
+			{ flexible = 20, { FileSize, Space }, Nothing },
+			{ flexible = 30, {
+				utils.surround({ "", "" }, "surface0", { Ruler })
+			}, {
+				utils.surround({ "", "" }, "surface0", { Ruler })
+			}},
+			{ flexible = 30, ScrollBar, Nothing }
+		}-- }}}
+
+		local InactiveStatusline = {-- {{{
 			condition = conditions.is_not_active,
 			FileType, SpaceR, FileName, Align,
-		}
+		}-- }}}
 
-		local StatusLines = {
+		local StatusLines = {-- {{{
 
 			hl = function()
 				if conditions.is_active() then
@@ -420,8 +451,10 @@ return {
 			fallthrough = false,
 
 			InactiveStatusline, GitLSPStatusline, DefaultStatusline,
-		}
+		}-- }}}
 
-		require('heirline').setup({ statusline = StatusLines })
+		require('heirline').setup({
+			statusline = StatusLines,
+		})
 	end
 }

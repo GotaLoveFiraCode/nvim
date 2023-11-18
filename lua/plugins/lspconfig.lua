@@ -5,7 +5,13 @@ return {
 		'folke/trouble.nvim',
 		'nvim-telescope/telescope.nvim',
 		'p00f/clangd_extensions.nvim',
-		{ 'j-hui/fidget.nvim', config = true }
+		{ 'j-hui/fidget.nvim', opts = {
+			notification = {
+				window = {
+					winblend = 0,
+				}
+			}
+		}}
 	}, -- }}}
 
 	config = function() -- {{{
