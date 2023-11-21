@@ -1,6 +1,7 @@
 return {
 	'rebelot/heirline.nvim',
-	lazy = false,
+	-- lazy = false,
+	event = 'UIEnter',
 
 	dependencies = {-- {{{
         { 'nvim-tree/nvim-web-devicons' },
@@ -347,43 +348,44 @@ return {
 			},
 		}-- }}}
 
-		-- local SearchCount = {{{{
-		-- 	condition = function()
-		-- 		return vim.v.hlsearch ~= 0 and vim.o.cmdheight == 0
-		-- 	end,
+		local SearchCount = { --{{{
+			condition = function()
+				return vim.v.hlsearch ~= 0 and vim.o.cmdheight == 0
+			end,
 
-		-- 	init = function(self)
-		-- 		local ok, search = pcall(vim.fn.searchcount)
-		-- 		if ok and search.total > 0 then
-		-- 			self.search = search
-		-- 		end
-		-- 	end,
-		-- 	provider = function(self)
-		-- 		local search = self.search
-		-- 		return string.format("[%d/%d]", search.current, math.min(search.total, search.maxcount))
-		-- 	end,
-		-- } -- }}}
+			init = function(self)
+				local ok, search = pcall(vim.fn.searchcount)
+				if ok and search.total > 0 then
+					self.search = search
+				end
+			end,
+			provider = function(self)
+				local search = self.search
+				return string.format("[%d/%d]", search.current, math.min(search.total, search.maxcount))
+			end,
+			hl = { fg = 'subtext0' }
+		} -- }}}
 
-		-- local MacroRec = { -- {{{
-		-- 	condition = function()
-		-- 		return vim.fn.reg_recording() ~= '' and vim.o.cmdheight == 0
-		-- 	end,
-		-- 	provider = ' ',
-		-- 	hl = { fg = 'yellow', bold = true },
-		-- 	utils.surround({ "[", "]" }, nil, {
-		-- 		provider = function()
-		-- 			return vim.fn.reg_recording()
-		-- 		end,
-		-- 		hl = { fg = 'green', bold = true },
-		-- 	}),
-		-- 	update = {
-		-- 		'RecordingEnter',
-		-- 		'RecordingLeave',
-		-- 	}
-		-- } -- }}}
+		local MacroRec = { -- {{{
+			condition = function()
+				return vim.fn.reg_recording() ~= '' and vim.o.cmdheight == 0
+			end,
+			provider = ' ',
+			hl = { fg = 'yellow', bold = true },
+			utils.surround({ "[", "]" }, nil, {
+				provider = function()
+					return vim.fn.reg_recording()
+				end,
+				hl = { fg = 'green', bold = true },
+			}),
+			update = {
+				'RecordingEnter',
+				'RecordingLeave',
+			}
+		} -- }}}
 
 		-- assembling status line
-		ViMode = utils.surround({ "", "" }, "surface0", { ViMode })
+		ViMode = utils.surround({ "", "" }, "surface0", { ViMode, MacroRec })
 		LspG = utils.surround({ "", "" }, "surface0", { Git, LSPActive })
 
 		local Nothing = { provider = "" }
@@ -414,6 +416,7 @@ return {
 
 			ViMode, Space, FileNameBlock, -- not flexible
 			{ flexible = 40, Align, SpaceR },
+			{ flexible = 30, { SearchCount, Space }, Nothing },
 			{ flexible = 1, { LspG, Space }, Nothing },
 			{ flexible = 20, { FileType, SpaceL }, Nothing },
 			{ flexible = 10, { FileFormat, SpaceL }, Nothing },

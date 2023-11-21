@@ -1,6 +1,6 @@
 return {
 	"hrsh7th/nvim-cmp",
-	event = 'VeryLazy',
+	event = { 'CmdlineEnter', 'InsertEnter' },
 
 	dependencies = { -- {{{
 		{ 'hrsh7th/cmp-nvim-lsp', dependencies = 'neovim/nvim-lspconfig' },
@@ -13,15 +13,6 @@ return {
 		{ 'hrsh7th/cmp-nvim-lsp-signature-help' },
 		{ 'onsails/lspkind.nvim' },
 		{ 'saadparwaiz1/cmp_luasnip' },
-
-		{ -- {{{ LuaSnip
-			'L3MON4D3/LuaSnip', version = "v2.*",
-			build = "make install_jsregexp",
-			dependencies = { 'rafamadriz/friendly-snippets' },
-			config = function()
-				require'luasnip.loaders.from_vscode'.lazy_load()
-			end
-		}, -- }}}
 	}, -- }}}
 
 	config = function() -- {{{
@@ -132,17 +123,6 @@ return {
 				}
 			}, -- }}}
 		} -- }}}
-
-		-- cmp.setup.cmdline ( -- {{{ Search
-		-- 	{ '/', '?' },
-		-- 	{
-		-- 		mapping = cmp.mapping.preset.cmdline(),
-		-- 		sources = cmp.config.sources (
-		-- 			{ name = 'nvim_lsp_document_symbol' },
-		-- 			{ name = 'buffer' }
-		-- 		)
-		-- 	}
-		-- ) -- }}}
 
 		cmp.setup.cmdline (':', { -- {{{ Cmd Line
 			mapping = cmp.mapping.preset.cmdline(),
