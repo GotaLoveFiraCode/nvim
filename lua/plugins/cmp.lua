@@ -3,14 +3,10 @@ return {
 	event = { 'CmdlineEnter', 'InsertEnter' },
 
 	dependencies = { -- {{{
-		{ 'hrsh7th/cmp-nvim-lsp', dependencies = 'neovim/nvim-lspconfig' },
 		-- { 'hrsh7th/cmp-buffer' },
 		{ 'hrsh7th/cmp-path' },
-		{ 'hrsh7th/cmp-cmdline' },
 		{ 'lukas-reineke/cmp-rg' },
 		{ 'ray-x/cmp-treesitter' },
-		{ 'hrsh7th/cmp-nvim-lua' },
-		{ 'hrsh7th/cmp-nvim-lsp-signature-help' },
 		{ 'onsails/lspkind.nvim' },
 		{ 'saadparwaiz1/cmp_luasnip' },
 	}, -- }}}
@@ -74,7 +70,6 @@ return {
 				{
 					{ name = 'treesitter' },
 					{ name = 'rg' },
-					-- { name = 'buffer' },
 				}
 			), -- }}}
 

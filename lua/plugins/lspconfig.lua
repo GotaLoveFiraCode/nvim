@@ -1,10 +1,12 @@
 return {
 	'neovim/nvim-lspconfig',
+	ft = 'c',
 
 	dependencies = { -- {{{
 		-- 'folke/trouble.nvim',
 		'nvim-telescope/telescope.nvim',
 		'p00f/clangd_extensions.nvim',
+		'hrsh7th/cmp-nvim-lsp',
 		{ 'j-hui/fidget.nvim', opts = {
 			notification = {
 				window = {
@@ -97,6 +99,5 @@ return {
 			notify(msg, ...)
 		end
 	end, -- }}}
-	ft = 'c',
 }
 
